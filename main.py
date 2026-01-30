@@ -24,6 +24,7 @@ def log_msg(msg, level='INFO'):
     except:
         pass
 
+# ============================================
 def get_device_id_s():
     try:
         from kivy.utils import platform
@@ -43,6 +44,7 @@ def generate_expected_key_s(device_id):
     salt = f'magpro_scale_mobile_v7_secure_salt_{device_id}'
     return hashlib.sha256(salt.encode()).hexdigest()
 
+# ============================================
 try:
     from kivy.config import Config
     Config.set('graphics', 'width', '400')
@@ -78,7 +80,7 @@ try:
 except Exception as e:
     log_msg(f'Import Error: {traceback.format_exc()}', 'CRITICAL')
     sys.exit(1)
-
+# ============================================
 class SmartTextField(MDTextField):
 
     def __init__(self, **kwargs):
@@ -268,8 +270,9 @@ class ScaleApp(MDApp):
                 try:
                     PythonActivity = autoclass('org.kivy.android.PythonActivity')
                     PythonActivity.mActivity.getWindow().addFlags(128)
+                    log_msg('Screen Keep On Set Successfully', 'INFO')
                 except Exception as e:
-                    print(f'Screen On Error: {e}')
+                    log_msg(f'Screen Keep On Error: {e}', 'ERROR')
             set_keep_screen_on()
         Window.bind(on_keyboard=self.on_keyboard_handler)
         if not self.check_license():
@@ -289,27 +292,8 @@ class ScaleApp(MDApp):
 
     def on_keyboard_handler(self, window, key, *args):
         if key == 27:
-            if self.dialog and self.dialog._is_open:
-                self.dialog.dismiss()
-                return True
-            if self.dialog_loading and self.dialog_loading._is_open:
-                return True
-            if self.activation_dialog_ref and self.activation_dialog_ref._is_open:
-                return True
-            if self.sm.current == 'scale':
-                self.show_exit_confirmation()
-                return True
-            elif self.sm.current == 'login':
-                self.show_exit_confirmation()
-                return True
             return True
         return False
-
-    def show_exit_confirmation(self):
-        if self.dialog_exit:
-            self.dialog_exit.dismiss()
-        self.dialog_exit = MDDialog(title='Quitter ?', text="Voulez-vous fermer l'application ?", buttons=[MDFlatButton(text='NON', on_release=lambda x: self.dialog_exit.dismiss()), MDRaisedButton(text='OUI', md_bg_color=(0.8, 0, 0, 1), on_release=lambda x: sys.exit(0))])
-        self.dialog_exit.open()
 
     def start_heartbeat(self):
         if not self.heartbeat_event:
