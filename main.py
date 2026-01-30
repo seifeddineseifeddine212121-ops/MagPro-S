@@ -293,15 +293,16 @@ class ScaleApp(MDApp):
     def on_keyboard_handler(self, window, key, *args):
         if key == 27:
             if self.sm.current == 'scale':
-                screen = self.root.get_screen('scale')
+                screen = self.root.get_screen('scale')        
                 if self.selected_product:
                     self.selected_product = None
                     screen.ids.bottom_nav.switch_tab('screen_products')
-                    return True
-                else:
-                    return False
+                
+                return True 
+
             elif self.sm.current == 'login':
-                return False
+                return True
+        
         return False
 
     def start_heartbeat(self):
